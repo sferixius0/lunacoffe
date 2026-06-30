@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LUNA COFFEE | Official Web App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #0b0b0d;
+            --bg-card: #141417;
+            --bg-card-hover: #1c1c21;
+            --accent: #ffffff;
+            --accent-muted: rgba(255, 255, 255, 0.6);
+            --text-white: #ffffff;
+            --text-silver: #e2e8f0;
+            --text-muted: #8a8f98;
+            --border-color: rgba(255, 255, 255, 0.06);
+            --badge-pet: rgba(226, 232, 240, 0.08);
+            --green-active: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-white);
+            padding-bottom: 90px; /* Отступ под нижний навибар */
+            overflow-x: hidden;
+            letter-spacing: -0.2px;
+        }
+
+        /* --- СИСТЕМА ЭКРАНОВ --- */
+        .app-screen {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .app-screen.active-screen {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- ГЛАВНЫЙ ЭКРАН (HOME) --- */
+        .home-hero {
+            padding: 60px 20px 40px;
+            text-align: center;
+            background: linear-gradient(to bottom, #1c1c22 0%, var(--bg-main) 100%);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .home-logo {
+            font-size: 48px;
+            font-weight: 800;
+            letter-spacing: 12px;
+            text-transform: uppercase;
+            margin-bottom: 6px;
+        }
+
+        .home-tagline {
+            font-size: 12px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 24px;
+        }
+
+        .hero-cta-btn {
+            display: inline-block;
+            background-color: var(--text-white);
+            color: var(--bg-main);
+            padding: 14px 32px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(255,255,255,0.1);
+            transition: transform 0.2s;
+        }
+        .hero-cta-btn:active { transform: scale(0.96); }
+
+        .home-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin: 30px 20px 14px;
+        }
+
+        /* Карточка лояльности */
+        .loyalty-card {
+            background: linear-gradient(135deg, #1e1e24 0%, #111115 100%);
+            margin: 0 16px;
+            padding: 20px;
+            border-radius: 20px;
+            border: 1px solid rgba(255,255,255,0.04);
+        }
+        .loyalty-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .loyalty-title { font-size: 15px; font-weight: 700; }
+        .loyalty-status { font-size: 12px; color: var(--green-active); font-weight: 600; }
+        .loyalty-grid {
+            display: flex;
+            justify-content: space-between;
+            gap: 8px;
+        }
+        .loyalty-dot {
+            flex: 1;
+            aspect-ratio: 1;
+            background-color: rgba(255,255,255,0.03);
+            border: 2px dashed rgba(255,255,255,0.15);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--text-muted);
+        }
+        .loyalty-dot.active {
+            background: var(--text-white);
+            border-style: solid;
+            border-color: var(--text-white);
+            color: var(--bg-main);
+            font-weight: 800;
+        }
+
+        /* Инфо-блоки */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 12px;
+            padding: 0 16px;
+        }
+        .info-card {
+            background-color: var(--bg-card);
+            padding: 18px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+        .info-card h4 { font-size: 14px; text-transform: uppercase; margin-bottom: 6px; letter-spacing: 0.5px;}
+        .info-card p { font-size: 13px; color: var(--text-muted); line-height: 1.5; }
+
+        /* --- ШАПКА МЕНЮ --- */
+        .menu-header {
+            text-align: center;
+            padding: 30px 20px 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* --- ЖИВОЙ ПОИСК --- */
+        .search-container {
+            max-width: 600px;
+            margin: 20px auto 10px;
+            padding: 0 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: var(--text-white);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-input:focus { border-color: rgba(255, 255, 255, 0.3); }
+
+        /* --- НАВИГАЦИЯ ПО КАТЕГОРИЯМ МЕНЮ --- */
+        .navigation-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            background-color: rgba(11, 11, 13, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .categories-scroll {
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 14px 10px;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+        .categories-scroll::-webkit-scrollbar { display: none; }
+
+        .nav-btn {
+            background: none; border: 1px solid transparent;
+            color: var(--text-muted); padding: 9px 18px; margin: 0 4px;
+            border-radius: 40px; font-size: 13px; font-weight: 600;
+            cursor: pointer; transition: all 0.2s;
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+        .nav-btn.active-tab {
+            background-color: var(--text-white);
+            color: var(--bg-main);
+            font-weight: 700;
+        }
+
+        /* --- ЭЛЕМЕНТЫ МЕНЮ --- */
+        .menu-wrapper { padding: 16px; max-width: 600px; margin: 0 auto; }
+        .menu-section { display: none; }
+        .menu-section.active-section { display: block; }
+
+        .item-card {
+            background-color: var(--bg-card);
+            border-radius: 16px; padding: 18px; margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.02); cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+        .item-card:hover { background-color: var(--bg-card-hover); }
+        .item-card:active { transform: scale(0.99); }
+
+        .item-row { display: flex; justify-content: space-between; align-items: flex-start; }
+        .item-title { font-size: 16px; font-weight: 700; text-transform: uppercase; }
+        .item-price {
+            font-size: 15px; font-weight: 800; background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px; border-radius: 8px; white-space: nowrap;
+        }
+        .item-meta { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        .item-desc { font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
+
+        .lemonade-grid-header { color: var(--text-muted); font-size: 11px; font-weight: 600; margin: 12px 0 6px; text-transform: uppercase; }
+        .lemonade-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 12px; color: #cbd5e1; }
+
+        /* --- МОДАЛЬНОЕ ОКНО КОНСТРУКТОРА --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            z-index: 2000; display: none; align-items: flex-end;
+        }
+        .modal-container {
+            width: 100%; background-color: #16161a; border-radius: 24px 24px 0 0;
+            padding: 24px; max-height: 85vh; overflow-y: auto;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-close {
+            background: rgba(255,255,255,0.05); border: none; color: var(--text-white);
+            width: 36px; height: 36px; border-radius: 50%; font-size: 18px; cursor: pointer;
+        }
+        .option-group { margin-bottom: 20px; }
+        .option-label { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; display: block; }
+        .selector-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+        .selector-item {
+            background-color: rgba(255,255,255,0.03); border: 1px solid var(--border-color);
+            padding: 12px; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.2s;
+        }
+        .selector-item.selected { background-color: var(--text-white); color: var(--bg-main); font-weight: 700; border-color: var(--text-white); }
+        .modifier-item {
+            display: flex; justify-content: space-between; align-items: center;
+            background-color: rgba(255,255,255,0.03); border: 1px solid var(--border-color);
+            padding: 12px 16px; border-radius: 12px; margin-bottom: 6px; cursor: pointer;
+        }
+        .modifier-item.selected { border-color: var(--green-active); background-color: rgba(16, 185, 129, 0.05); }
+        .add-to-cart-btn {
+            width: 100%; background-color: var(--text-white); color: var(--bg-main);
+            border: none; padding: 16px; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 15px;
+        }
+
+        /* --- ТРИГГЕР КОРЗИНЫ НАД НАВИБАРОМ --- */
+        .cart-bar {
+            position: fixed;
+            bottom: 85px; left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px); max-width: 568px;
+            background-color: #10b981; color: white;
+            padding: 14px 20px; border-radius: 14px;
+            display: none; justify-content: space-between; align-items: center;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.25);
+            z-index: 1001; cursor: pointer;
+        }
+        .cart-bar-info { display: flex; flex-direction: column; }
+        .cart-bar-title { font-weight: 700; font-size: 14px; }
+        .cart-bar-count { font-size: 11px; opacity: 0.8; }
+        .cart-bar-total { font-weight: 800; font-size: 16px; }
+
+        /* --- ОКНО ПРОСМОТРА КОРЗИНЫ --- */
+        .cart-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.85); z-index: 2500;
+            display: none; align-items: flex-end;
+        }
+        .cart-modal-container {
+            width: 100%; background-color: #16161a; border-radius: 24px 24px 0 0;
+            padding: 24px; max-height: 80vh; display: flex; flex-direction: column;
+        }
+        .cart-items-list { overflow-y: auto; flex-grow: 1; margin: 15px 0; }
+        .cart-item-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color); }
+        .cart-item-details { display: flex; flex-direction: column; gap: 2px; }
+        .cart-item-name { font-weight: 600; font-size: 14px; text-transform: uppercase; }
+        .cart-item-mods { font-size: 11px; color: var(--text-muted); }
+        .quantity-controls { display: flex; align-items: center; gap: 12px; background-color: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 8px; }
+        .qty-btn { background: none; border: none; color: white; font-size: 16px; font-weight: 700; cursor: pointer; width: 20px; text-align: center; }
+
+        /* --- НИЖНИЙ НАВИГАЦИОННЫЙ БАР (BOTTOM NAV) --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            background-color: rgba(20, 20, 23, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 10px 24px; /* Доп отступ снизу под безрамочные экраны смартфонов */
+            z-index: 1500;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .nav-item svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+            transition: transform 0.2s;
+        }
+
+        .nav-item.active-nav {
+            color: var(--text-white);
+        }
+        .nav-item:active svg { transform: scale(0.9); }
+    </style>
+</head>
+<body>
+
+    <!-- ================= ЭКРАН 1: ГЛАВНАЯ (HOME) ================= -->
+    <div id="screen-home" class="app-screen active-screen">
+        <div class="home-hero">
+            <h1 class="home-logo">Luna</h1>
+            <div class="home-tagline">Coffee & Atmosphere</div>
+            <button class="hero-cta-btn" onclick="navigateTo('screen-menu')">Перейти в меню</button>
+        </div>
+
+        <h3 class="home-section-title">Карта лояльности</h3>
+        <div class="loyalty-card">
+            <div class="loyalty-header">
+                <span class="loyalty-title">Каждый 6-й кофе в подарок</span>
+                <span class="loyalty-status">Активно</span>
+            </div>
+            <div class="loyalty-grid">
+                <div class="loyalty-dot active">✓</div>
+                <div class="loyalty-dot active">✓</div>
+                <div class="loyalty-dot active">✓</div>
+                <div class="loyalty-dot">4</div>
+                <div class="loyalty-dot">5</div>
+                <div class="loyalty-dot">🎁</div>
+            </div>
+        </div>
+
+        <h3 class="home-section-title">О нас</h3>
+        <div class="info-grid">
+            <div class="info-card">
+                <h4>Локация и контакты</h4>
+                <p>г. Полоцк, ул. Богдановича, 15<br>Рады гостям с питомцами (Pet-friendly) 🐾</p>
+            </div>
+            <div class="info-card">
+                <h4>Время работы</h4>
+                <p>Будние дни: 08:00 — 22:00<br>Выходные дни: 09:00 — 22:00</p>
+            </div>
+            <div class="info-card">
+                <h4>Свежая выпечка</h4>
+                <p>Каждое утро привозим свежие круассаны, крафтовые панини и нежные творожные вафли.</p>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin: 30px 0 10px;">
+            <a href="https://instagram.com/lunacoffee.polotsk" target="_blank" style="color: var(--text-muted); font-size:12px; text-decoration:none; letter-spacing:1px;">INSTAGRAM: @LUNACOFFEE.POLOTSK</a>
+        </div>
+    </div>
+
+
+    <!-- ================= ЭКРАН 2: МЕНЮ (MENU) ================= -->
+    <div id="screen-menu" class="app-screen">
+        <header class="menu-header">
+            <h2 style="text-transform: uppercase; font-spacing: 2px; font-size: 20px;">Наше меню</h2>
+        </header>
+
+        <div class="search-container">
+            <input type="text" class="search-input" id="menuSearch" placeholder="Поиск по названию или составу..." oninput="filterMenu()">
+        </div>
+
+        <div class="navigation-wrapper">
+            <nav class="categories-scroll" id="navScroll">
+                <button class="nav-btn active-tab" onclick="switchTab(event, 'sec-coffee')">Кофе</button>
+                <button class="nav-btn" onclick="switchTab(event, 'sec-cold')">Сезонные</button>
+                <button class="nav-btn" onclick="switchTab(event, 'sec-tea')">Чай</button>
+                <button class="nav-btn" onclick="switchTab(event, 'sec-breakfast')">Завтраки</button>
+                <button class="nav-btn" onclick="switchTab(event, 'sec-other')">Не Кофе</button>
+            </nav>
+        </div>
+
+        <main class="menu-wrapper">
+            <!-- КОФЕ -->
+            <div id="sec-coffee" class="menu-section active-section">
+                <div class="item-card" onclick="openConfig('Эспрессо', [3.50, 4.50], ['30 мл', '60 мл'], true)">
+                    <div class="item-row"><span class="item-title">Эспрессо</span><span class="item-price">от 3.50</span></div>
+                    <div class="item-meta">Классический бодрящий шот плотного кофе.</div>
+                </div>
+                <div class="item-card" onclick="openConfig('Американо', [4.50, 5.50], ['150 мл', '250 мл'], true)">
+                    <div class="item-row"><span class="item-title">Американо</span><span class="item-price">от 4.50</span></div>
+                    <div class="item-meta">Эспрессо с добавлением горячей воды.</div>
+                </div>
+                <div class="item-card" onclick="openConfig('Капучино', [5.00, 6.00], ['250 мл', '350 мл'], true)">
+                    <div class="item-row"><span class="item-title">Капучино</span><span class="item-price">от 5.00</span></div>
+                    <div class="item-meta">Идеальный баланс эспрессо и шелковистой молочной пены.</div>
+                </div>
+                <div class="item-card" onclick="openConfig('Латте', [5.00, 6.00], ['250 мл', '350 мл'], true)">
+                    <div class="item-row"><span class="item-title">Латте</span><span class="item-price">от 5.00</span></div>
+                    <div class="item-meta">Нежный кофейно-молочный напиток с легкой пенкой.</div>
+                </div>
+                <div class="item-card" onclick="openConfig('Раф', [6.00, 7.00], ['250 мл', '350 мл'], true)">
+                    <div class="item-row"><span class="item-title">Раф</span><span class="item-price">от 6.00</span></div>
+                    <div class="item-meta">Кофе, взбитый со сливками и ванильным сахаром. Very smooth.</div>
+                </div>
+                <div class="item-card" onclick="openConfig('Халвичный раф', [8.00], ['350 мл'], true)">
+                    <div class="item-row"><span class="item-title">Халвичный раф</span><span class="item-price">8.00</span></div>
+                    <div class="item-meta">Густой сливочный раф с добавлением натуральной халвы.</div>
+                </div>
+            </div>
+
+            <!-- СЕЗОННЫЕ -->
+            <div id="sec-cold" class="menu-section">
+                <div class="item-card" onclick="openConfig('Айс-Латте', [8.00, 15.00], ['350 мл', '650 мл (XXL)'], true)">
+                    <div class="item-row"><span class="item-title">Айс-Латте</span><span class="item-price">от 8.00</span></div>
+                    <div class="item-meta">Освежающий нежный кофе с холодным молоком и льдом.</div>
+                </div>
+                <div class="item-card" onclick="openConfig('Эспрессо-Тоник', [8.00, 15.00], ['350 мл', '650 мл (XXL)'], true)">
+                    <div class="item-row"><span class="item-title">Эспрессо-Тоник</span><span class="item-price">от 8.00</span></div>
+                    <div class="item-meta">Горчинка тоника, кислинка кофе и много льда.</div>
+                </div>
+                <div class="item-card" onclick="openConfig('Бамбл', [8.00, 15.00], ['350 мл', '650 мл (XXL)'], true)">
+                    <div class="item-row"><span class="item-title">Бамбл</span><span class="item-price">от 8.00</span></div>
+                    <div class="item-meta">Слоеный коктейль из сока и эспрессо. Вкусы на выбор.</div>
+                </div>
+                <div class="item-card" onclick="openConfig('Домашний Лимонад', [8.00, 13.00], ['350 мл', '650 мл'], false)">
+                    <div class="item-row"><span class="item-title" style="font-weight: 800;">Домашние лимонады</span><span class="item-price">от 8.00</span></div>
+                    <div class="lemonade-grid-header">Вкусы:</div>
+                    <div class="lemonade-grid">
+                        <div>• Клубника</div><div>• Манго-маракуйя</div>
+                        <div>• Киви-фейхоа</div><div>• Клубника-базилик</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ЧАЙ -->
+            <div id="sec-tea" class="menu-section">
+                <div class="item-card" onclick="openConfig('Листовой чай', [4.00, 8.00], ['350 мл', '1000 мл'], false)">
+                    <div class="item-row"><span class="item-title">Листовой чай</span><span class="item-price">от 4.00</span></div>
+                    <div class="item-meta">Высшие сорта черного, зеленого и фруктового чая.</div>
+                </div>
+                <div class="item-card" onclick="openConfig('Облепиховый чай', [5.00, 10.00], ['350 мл', '1000 мл'], false)">
+                    <div class="item-row"><span class="item-title">Облепиховый чай</span><span class="item-price">от 5.00</span></div>
+                    <div class="item-meta">Яркая облепиха со свежим апельсином.</div>
+                </div>
+            </div>
+
+            <!-- ЗАВТРАКИ -->
+            <div id="sec-breakfast" class="menu-section">
+                <div class="item-card" onclick="openConfig('Сырники (1 шт)', [2.50], ['1 шт'], false)">
+                    <div class="item-row"><span class="item-title">Сырники</span><span class="item-price">2.50 / шт</span></div>
+                    <div class="item-meta">Из фермерского творога. идеальны со сгущенкой.</div>
+                </div>
+                <div class="item-card" onclick="openConfig('Вафля с форелью', [15.00], ['порция'], false)">
+                    <div class="item-row"><span class="item-title">Творожная вафля с форелью</span><span class="item-price">15.00</span></div>
+                    <div class="item-desc">Рисовая мука, слабосоленая форель, хрустящий корнишон, творожный сыр.</div>
+                </div>
+            </div>
+
+            <!-- НЕ КОФЕ -->
+            <div id="sec-other" class="menu-section">
+                <div class="item-card" onclick="openConfig('Матча Латте', [8.00], ['350 мл'], true)">
+                    <div class="item-row"><span class="item-title">Матча Латте</span><span class="item-price">8.00</span></div>
+                    <div class="item-meta">Японский перетертый зеленый чай с молоком.</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+    <!-- ================= ОКНА МОДИФИКАТОРОВ И КОРЗИНЫ ================= -->
+    <div class="modal-overlay" id="configModal" onclick="closeConfig(event)">
+        <div class="modal-container" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2 id="modalProductTitle">Название</h2>
+                <button class="modal-close" onclick="closeConfig(null)">×</button>
+            </div>
+            <div class="option-group" id="sizeGroup">
+                <span class="option-label">Объем / Размер</span>
+                <div class="selector-grid" id="sizeSelectors"></div>
+            </div>
+            <div class="option-group" id="modsGroup">
+                <span class="option-label">Добавки</span>
+                <div class="modifier-item" onclick="toggleModifier(this, 3.00, 'Альтернативное молоко')"><span>Альтернативное молоко</span><strong>+3.00 BYN</strong></div>
+                <div class="modifier-item" onclick="toggleModifier(this, 0.50, 'Сироп')"><span>Фирменный сироп</span><strong>+0.50 BYN</strong></div>
+                <div class="modifier-item" onclick="toggleModifier(this, 1.00, 'Сырная шапочка')"><span>Сырная шапочка</span><strong>+1.00 BYN</strong></div>
+            </div>
+            <button class="add-to-cart-btn" onclick="addItemToCart()">Добавить</button>
+        </div>
+    </div>
+
+    <div class="cart-bar" id="cartBar" onclick="openCart()">
+        <div class="cart-bar-info">
+            <span class="cart-bar-title">Ваш заказ</span>
+            <span class="cart-bar-count" id="cartBarCount">0 товаров</span>
+        </div>
+        <span class="cart-bar-total" id="cartBarTotal">0.00 BYN</span>
+    </div>
+
+    <div class="cart-modal" id="cartModal" onclick="closeCart(event)">
+        <div class="cart-modal-container" onclick="event.stopPropagation()">
+            <div class="modal-header">
+                <h2>Ваш выбор</h2>
+                <button class="modal-close" onclick="closeCart(null)">×</button>
+            </div>
+            <div class="cart-items-list" id="cartItemsContainer"></div>
+            <div style="display:flex; justify-content:space-between; margin: 15px 0; font-weight:800; font-size:18px;">
+                <span>ИТОГО:</span><span id="cartFinalTotal">0.00 BYN</span>
+            </div>
+            <button class="add-to-cart-btn" style="background-color:#10b981; color:white;" onclick="alert('Покажите этот экран бариста для подтверждения предзаказа!')">Показать бариста</button>
+        </div>
+    </div>
+
+
+    <!-- ================= НИЖНИЙ НАВИБАР (BOTTOM NAV) ================= -->
+    <nav class="bottom-nav">
+        <div class="nav-item active-nav" id="btn-nav-home" onclick="navigateTo('screen-home')">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            Главная
+        </div>
+        <div class="nav-item" id="btn-nav-menu" onclick="navigateTo('screen-menu')">
+            <svg viewBox="0 0 24 24"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2.5v-9.03C11.34 12.84 13 11.12 13 9V2h-2v7zm5-3v8h2.5v8H21V2c-2.76 0-5 2.24-5 4z"/></svg>
+            Меню
+        </div>
+        <div class="nav-item" id="btn-nav-cart" onclick="openCartFromNav()">
+            <svg viewBox="0 0 24 24"><path d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zM1 2v2h2l3.6 7.59-1.35 2.45c-.16.28-.25.61-.25.96 0 1.1.9 2 2 2h12v-2H7.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49c.08-.14.12-.31.12-.48 0-.55-.45-1-1-1H5.21l-.94-2H1zm16 16c-1.1 0-1.99.9-1.99 2s.89 2 1.99 2 2-.9 2-2-.9-2-2-2z"/></svg>
+            Корзина
+        </div>
+    </nav>
+
+
+    <!-- ================= ЛОГИКА ПРИЛОЖЕНИЯ ================= -->
+    <script>
+        let cart = [];
+        let currentItem = { name: '', basePrices: [], sizes: [], selectedSizeIndex: 0, activeMods: [] };
+
+        // Главный роутинг (Переключение страниц внизу)
+        function navigateTo(screenId) {
+            const screens = document.querySelectorAll('.app-screen');
+            screens.forEach(screen => screen.classList.remove('active-screen'));
+            document.getElementById(screenId).classList.add('active-screen');
+
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active-nav'));
+            
+            if(screenId === 'screen-home') document.getElementById('btn-nav-home').classList.add('active-nav');
+            if(screenId === 'screen-menu') document.getElementById('btn-nav-menu').classList.add('active-nav');
+            
+            window.scrollTo(0,0);
+        }
+
+        function openCartFromNav() {
+            if(cart.length === 0) {
+                alert("Ваша корзина пуста! Перейдите в меню, чтобы выбрать позиции.");
+                navigateTo('screen-menu');
+            } else {
+                openCart();
+            }
+        }
+
+        // Логика переключения табов категорий в меню
+        function switchTab(event, sectionId) {
+            const sections = document.getElementsByClassName("menu-section");
+            for (let i = 0; i < sections.length; i++) sections[i].classList.remove("active-section");
+            
+            const buttons = document.getElementsByClassName("nav-btn");
+            for (let i = 0; i < buttons.length; i++) buttons[i].classList.remove("active-tab");
+            
+            document.getElementById(sectionId).classList.add("active-section");
+            event.currentTarget.classList.add("active-tab");
+        }
+
+        // Поиск по меню
+        function filterMenu() {
+            const query = document.getElementById("menuSearch").value.toLowerCase();
+            const cards = document.getElementsByClassName("item-card");
+            for (let card of cards) {
+                const title = card.querySelector(".item-title").innerText.toLowerCase();
+                const desc = card.querySelector(".item-meta") ? card.querySelector(".item-meta").innerText.toLowerCase() : "";
+                if (title.includes(query) || desc.includes(query)) card.style.display = "block";
+                else card.style.display = "none";
+            }
+        }
+
+        // Настройка карточки конструктора товара
+        function openConfig(name, prices, sizes, allowMods) {
+            currentItem = { name: name, basePrices: prices, sizes: sizes, selectedSizeIndex: 0, activeMods: [] };
+            document.getElementById("modalProductTitle").innerText = name;
+            
+            const sizeGrid = document.getElementById("sizeSelectors");
+            sizeGrid.innerHTML = "";
+            sizes.forEach((size, idx) => {
+                const div = document.createElement("div");
+                div.className = `selector-item ${idx === 0 ? 'selected' : ''}`;
+                div.innerHTML = `<div>${size}</div><div style="font-size:11px;opacity:0.6;margin-top:2px;">${prices[idx].toFixed(2)} BYN</div>`;
+                div.onclick = () => {
+                    currentItem.selectedSizeIndex = idx;
+                    document.querySelectorAll("#sizeSelectors .selector-item").forEach((s, i) => s.classList.toggle('selected', i === idx));
+                };
+                sizeGrid.appendChild(div);
+            });
+
+            document.getElementById("modsGroup").style.display = allowMods ? "block" : "none";
+            document.querySelectorAll(".modifier-item").forEach(item => item.classList.remove("selected"));
+            document.getElementById("configModal").style.display = "flex";
+        }
+
+        function closeConfig(e) { if(!e || e.target === document.getElementById("configModal") || e === null) document.getElementById("configModal").style.display = "none"; }
+
+        function toggleModifier(element, price, name) {
+            element.classList.toggle("selected");
+            if(element.classList.contains("selected")) currentItem.activeMods.push({ name: name, price: price });
+            else currentItem.activeMods = currentItem.activeMods.filter(m => m.name !== name);
+        }
+
+        function addItemToCart() {
+            const finalPrice = currentItem.basePrices[currentItem.selectedSizeIndex] + currentItem.activeMods.reduce((acc, m) => acc + m.price, 0);
+            const sizeLabel = currentItem.sizes[currentItem.selectedSizeIndex];
+            const modsKey = currentItem.activeMods.map(m => m.name).sort().join(",");
+            const cartItemId = `${currentItem.name}-${sizeLabel}-${modsKey}`;
+
+            const existingItem = cart.find(item => item.id === cartItemId);
+            if(existingItem) existingItem.qty++;
+            else {
+                cart.push({ id: cartItemId, name: currentItem.name, size: sizeLabel, price: finalPrice, mods: [...currentItem.activeMods], qty: 1 });
+            }
+            updateCartBar();
+            closeConfig(null);
+        }
+
+        function updateCartBar() {
+            const bar = document.getElementById("cartBar");
+            if(cart.length === 0) { bar.style.display = "none"; return; }
+            bar.style.display = "flex";
+            document.getElementById("cartBarCount").innerText = `${cart.reduce((acc, item) => acc + item.qty, 0)} позиций`;
+            document.getElementById("cartBarTotal").innerText = `${cart.reduce((acc, item) => acc + (item.price * item.qty), 0).toFixed(2)} BYN`;
+        }
+
+        function openCart() {
+            const container = document.getElementById("cartItemsContainer");
+            container.innerHTML = "";
+            let totalSum = 0;
+
+            cart.forEach(item => {
+                const row = document.createElement("div");
+                row.className = "cart-item-row";
+                const modText = item.mods.length > 0 ? ` (+ ${item.mods.map(m=>m.name).join(', ')})` : '';
+                totalSum += item.price * item.qty;
+
+                row.innerHTML = `
+                    <div class="cart-item-details">
+                        <span class="cart-item-name">${item.name}</span>
+                        <span class="cart-item-mods">${item.size}${modText}</span>
+                        <span style="font-size:12px; font-weight:700; margin-top:2px;">${(item.price * item.qty).toFixed(2)} BYN</span>
+                    </div>
+                    <div class="quantity-controls">
+                        <button class="qty-btn" onclick="changeQty('${item.id}', -1)">-</button>
+                        <span>${item.qty}</span>
+                        <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+                    </div>
+                `;
+                container.appendChild(row);
+            });
+            document.getElementById("cartFinalTotal").innerText = `${totalSum.toFixed(2)} BYN`;
+            document.getElementById("cartModal").style.display = "flex";
+        }
+
+        function closeCart(e) { if(!e || e.target === document.getElementById("cartModal") || e === null) document.getElementById("cartModal").style.display = "none"; }
+
+        function changeQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if(item) {
+                item.qty += delta;
+                if(item.qty <= 0) cart = cart.filter(i => i.id !== id);
+            }
+            updateCartBar();
+            if(cart.length === 0) closeCart(null);
+            else openCart();
+        }
+    </script>
+</body>
+</html>
