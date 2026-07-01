@@ -1,0 +1,1165 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>LUNA COFFEE | Official Web App</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-main: #0b0b0d;
+            --bg-card: #141417;
+            --bg-card-hover: #1c1c21;
+            --accent: #ffffff;
+            --accent-muted: rgba(255, 255, 255, 0.6);
+            --text-white: #ffffff;
+            --text-silver: #e2e8f0;
+            --text-muted: #8a8f98;
+            --border-color: rgba(255, 255, 255, 0.06);
+            --green-active: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-white);
+            padding-bottom: 90px;
+            overflow-x: hidden;
+            letter-spacing: -0.2px;
+        }
+
+        /* --- СИСТЕМА ЭКРАНОВ --- */
+        .app-screen {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .app-screen.active-screen {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(4px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- ГЛАВНЫЙ ЭКРАН (HOME) --- */
+        .home-hero {
+            padding: 70px 20px 40px;
+            text-align: center;
+            background: linear-gradient(to bottom, #1c1c22 0%, var(--bg-main) 100%);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .home-logo {
+            font-size: 52px;
+            font-weight: 800;
+            letter-spacing: 14px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .home-tagline {
+            font-size: 13px;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 5px;
+            margin-bottom: 24px;
+        }
+
+        .hero-cta-btn {
+            display: inline-block;
+            background-color: var(--text-white);
+            color: var(--bg-main);
+            padding: 16px 36px;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 14px;
+            text-transform: uppercase;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 8px 24px rgba(255,255,255,0.1);
+            transition: transform 0.2s;
+        }
+        .hero-cta-btn:active { transform: scale(0.96); }
+
+        .home-section-title {
+            font-size: 14px;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--text-muted);
+            margin: 35px 20px 16px;
+        }
+
+        /* --- ГАЛЕРЕЯ (СЛАЙДЕР) --- */
+        .gallery-container {
+            position: relative;
+            margin: 10px 0 25px;
+            padding: 0 16px;
+        }
+
+        .gallery-track {
+            display: flex;
+            overflow-x: auto;
+            scroll-snap-type: x mandatory;
+            gap: 12px;
+            padding-bottom: 10px;
+            justify-content: center;
+        }
+        .gallery-track::-webkit-scrollbar { display: none; }
+
+        .gallery-slide {
+            flex: 0 0 75%;
+            max-width: 300px;
+            scroll-snap-align: center;
+            position: relative;
+            border-radius: 18px;
+            overflow: hidden;
+            aspect-ratio: 3 / 4;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+        }
+
+        @media (min-width: 600px) {
+            .gallery-slide { flex: 0 0 40%; max-width: 280px; }
+        }
+
+        .gallery-slide img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        .gallery-caption {
+            position: absolute;
+            bottom: 0; left: 0; width: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+            padding: 16px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-white);
+        }
+
+        /* Инфо-блоки */
+        .info-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+            padding: 0 16px;
+        }
+        .info-card {
+            background-color: var(--bg-card);
+            padding: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.02);
+        }
+        .info-card h4 { font-size: 14px; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 0.5px;}
+        .info-card p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+
+        /* --- ШАПКА МЕНЮ --- */
+        .menu-header {
+            text-align: center;
+            padding: 30px 20px 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        /* --- ЖИВОЙ ПОИСК --- */
+        .search-container {
+            max-width: 600px;
+            margin: 20px auto 10px;
+            padding: 0 16px;
+        }
+
+        .search-input {
+            width: 100%;
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 14px 16px;
+            color: var(--text-white);
+            font-size: 14px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        .search-input:focus { border-color: rgba(255, 255, 255, 0.3); }
+
+        /* --- НАВИГАЦИЯ ПО КАТЕГОРИЯМ МЕНЮ --- */
+        .navigation-wrapper {
+            position: sticky;
+            top: 0;
+            z-index: 999;
+            background-color: rgba(11, 11, 13, 0.92);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .categories-scroll {
+            display: flex;
+            align-items: center;
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 14px 10px;
+            max-width: 650px;
+            margin: 0 auto;
+        }
+        .categories-scroll::-webkit-scrollbar { display: none; }
+
+        .nav-btn {
+            background: none;
+            border: 1px solid transparent;
+            color: var(--text-muted); padding: 9px 18px; margin: 0 4px;
+            border-radius: 40px; font-size: 13px; font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            background-color: rgba(255, 255, 255, 0.02);
+        }
+        .nav-btn.active-tab {
+            background-color: var(--text-white);
+            color: var(--bg-main);
+            font-weight: 700;
+        }
+
+        /* --- ЭЛЕМЕНТЫ МЕНЮ --- */
+        .menu-wrapper { padding: 16px; max-width: 600px; margin: 0 auto; }
+        .menu-section { display: none; }
+        .menu-section.active-section { display: block; }
+
+        /* Стили контейнера карточки с поддержкой картинок напитков */
+        .item-card {
+            background-color: var(--bg-card);
+            border-radius: 16px; padding: 18px; margin-bottom: 12px;
+            border: 1px solid rgba(255, 255, 255, 0.02); cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            display: flex;
+            gap: 16px;
+            align-items: center;
+        }
+        .item-card:hover { background-color: var(--bg-card-hover); }
+        .item-card:active { transform: scale(0.99); }
+
+        .item-content { flex-grow: 1; }
+        .item-row { display: flex; justify-content: space-between; align-items: flex-start; }
+        .item-title { font-size: 16px; font-weight: 700; text-transform: uppercase; }
+        .item-price {
+            font-size: 14px;
+            font-weight: 800; background: rgba(255, 255, 255, 0.05);
+            padding: 4px 10px; border-radius: 8px; white-space: nowrap;
+        }
+        .item-meta { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+        .item-desc { font-size: 12px; color: var(--text-muted); margin-top: 8px; line-height: 1.5; }
+
+        /* Маленькие превью картинок в меню */
+        .item-thumb {
+            width: 65px;
+            height: 65px;
+            object-fit: cover;
+            border-radius: 12px;
+            background-color: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--border-color);
+            flex-shrink: 0;
+        }
+
+        /* --- МОДАЛЬНОЕ ОКНО КОНСТРУКТОРА --- */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.8); backdrop-filter: blur(8px);
+            z-index: 2000; display: none; align-items: flex-end;
+        }
+        .modal-container {
+            width: 100%;
+            background-color: #16161a; border-radius: 24px 24px 0 0;
+            padding: 24px; max-height: 85vh; overflow-y: auto;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+            animation: slideUp 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-close {
+            background: rgba(255,255,255,0.05);
+            border: none; color: var(--text-white);
+            width: 36px; height: 36px; border-radius: 50%; font-size: 18px; cursor: pointer;
+        }
+        .option-group { margin-bottom: 20px; }
+        .option-label { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; margin-bottom: 10px; display: block; }
+        .selector-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; }
+        .selector-item {
+            background-color: rgba(255,255,255,0.03);
+            border: 1px solid var(--border-color);
+            padding: 12px; border-radius: 12px; text-align: center; cursor: pointer; transition: all 0.2s;
+        }
+        .selector-item.selected { background-color: var(--text-white); color: var(--bg-main); font-weight: 700; border-color: var(--text-white); }
+        
+        .modifier-item {
+            display: flex;
+            justify-content: space-between; align-items: center;
+            background-color: rgba(255,255,255,0.03); border: 1px solid var(--border-color);
+            padding: 12px 16px; border-radius: 12px; margin-bottom: 6px; cursor: pointer;
+        }
+        .modifier-item.selected { border-color: var(--green-active); background-color: rgba(16, 185, 129, 0.05); }
+        .add-to-cart-btn {
+            width: 100%;
+            background-color: var(--text-white); color: var(--bg-main);
+            border: none; padding: 16px; border-radius: 14px; font-weight: 700; font-size: 16px; cursor: pointer; margin-top: 15px;
+        }
+
+        /* --- ТРИГГЕР КОРЗИНЫ НАД НАВБАРОМ --- */
+        .cart-bar {
+            position: fixed;
+            bottom: 85px; left: 50%;
+            transform: translateX(-50%);
+            width: calc(100% - 32px); max-width: 568px;
+            background-color: #10b981; color: white;
+            padding: 14px 20px;
+            border-radius: 14px;
+            display: none; justify-content: space-between; align-items: center;
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.25);
+            z-index: 1001; cursor: pointer;
+        }
+        .cart-bar-info { display: flex; flex-direction: column; }
+        .cart-bar-title { font-weight: 700; font-size: 14px; }
+        .cart-bar-count { font-size: 11px; opacity: 0.8; }
+        .cart-bar-total { font-weight: 800; font-size: 16px; }
+
+        /* --- ОКНО КОРЗИНЫ --- */
+        .cart-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.85); z-index: 2500;
+            display: none; align-items: flex-end;
+        }
+        .cart-modal-container {
+            width: 100%;
+            background-color: #16161a; border-radius: 24px 24px 0 0;
+            padding: 24px; max-height: 80vh; display: flex; flex-direction: column;
+        }
+        .cart-items-list { overflow-y: auto; flex-grow: 1; margin: 15px 0; }
+        .cart-item-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border-color); }
+        .cart-item-details { display: flex; flex-direction: column; gap: 2px; }
+        .cart-item-name { font-weight: 600; font-size: 14px; text-transform: uppercase; }
+        .cart-item-mods { font-size: 11px; color: var(--text-muted); }
+        .quantity-controls { display: flex; align-items: center; gap: 12px; background-color: rgba(255, 255, 255, 0.05); padding: 6px 12px; border-radius: 8px; }
+        .qty-btn { background: none; border: none; color: white; font-size: 16px; font-weight: 700; cursor: pointer; width: 20px; text-align: center; }
+
+        /* --- НИЖНИЙ НАВИГАЦИОННЫЙ БАР (BOTTOM NAV) --- */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0; left: 0; width: 100%;
+            background-color: rgba(20, 20, 23, 0.95);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-around;
+            padding: 12px 10px 24px;
+            z-index: 1500;
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            color: var(--text-muted);
+            font-size: 10px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            gap: 4px;
+            flex: 1;
+        }
+
+        .nav-item svg {
+            width: 22px;
+            height: 22px;
+            fill: currentColor;
+            transition: transform 0.2s;
+        }
+
+        .nav-item.active-nav { color: var(--text-white); }
+        .nav-item:active svg { transform: scale(0.9); }
+    </style>
+</head>
+<body>
+
+    <div id="screen-home" class="app-screen active-screen">
+        <div class="home-hero">
+            <h1 class="home-logo">Luna</h1>
+            <div class="home-tagline">Coffee & Atmosphere</div>
+            <button class="hero-cta-btn" onclick="navigateTo('screen-menu')">Открыть меню</button>
+        </div>
+
+        <h3 class="home-section-title">Атмосфера Luna Coffee</h3>
+        <div class="gallery-container">
+            <div class="gallery-track">
+                <div class="gallery-slide">
+                    <img src="images/photo_1_2026-07-01_17-51-37.jpg" alt="Магия вечернего уюта.">
+                    <div class="gallery-caption">Твой идеальный кофе всегда с собой</div>
+                </div>
+                <div class="gallery-slide">
+                    <img src="images/photo_3_2026-07-01_17-51-37.jpg" alt="Вкус, созданный вдохновлять.">
+                    <div class="gallery-caption">Сладкие моменты, которые тают во рту</div>
+                </div>
+                <div class="gallery-slide">
+                    <img src="images/photo_2026-07-01_17-54-01.jpg" alt="Ваш личный уголок комфорта.">
+                    <div class="gallery-caption">Эстетика уюта в каждой детали</div>
+                </div>
+            </div>
+        </div>
+
+        <h3 class="home-section-title">О нашей кофейне</h3>
+        <div class="info-grid">
+            <div class="info-card">
+                <h4>Локация и контакты</h4>
+                <p>г. Полоцк, ул. Богдановича, 15<br>Рады гостям с питомцами (Pet-friendly) 🐾</p>
+            </div>
+            <div class="info-card">
+                <h4>Время работы</h4>
+                <p>Будние дни: 08:00 – 22:00<br>Выходные дни: 09:00 – 22:00</p>
+            </div>
+            <div class="info-card">
+                <h4>Свежая выпечка и завтраки</h4>
+                <p>Каждое утро готовим фирменные сытные творожные вафли, круассаны и панини.<br>Отличный старт для твоего дня.</p>
+            </div>
+        </div>
+        
+        <div style="text-align: center; margin: 40px 0 20px;">
+            <a href="https://instagram.com/lunacoffee.polotsk" target="_blank" style="color: var(--text-muted); font-size:12px; text-decoration:none; letter-spacing:1px;">INSTAGRAM: @LUNACOFFEE.POLOTSK</a>
+        </div>
+    </div>
+
+    <div id="screen-menu" class="app-screen">
+        <header class="menu-header">
+            <h2 style="text-transform: uppercase; letter-spacing: 2px; font-size: 20px;">Наше меню</h2>
+        </header>
+
+        <div class="search-container">
+            <input type="text" class="search-input" id="menuSearch" placeholder="Поиск по названию или составу..." oninput="filterMenu()">
+        </div>
+
+        <div class="navigation-wrapper">
+            <nav class="categories-scroll" id="navScroll">
+                <button class="nav-btn active-tab" onclick="switchTab(event, 'sec-coffee')">Кофе</button>
+                <button class="nav-btn" onclick="switchTab(event, 'sec-cold')">Холодные</button>
+                <button class="nav-btn" onclick="switchTab(event, 'sec-lemonades')">Лимонады</button>
+                <button class="nav-btn" onclick="switchTab(event, 'sec-tea')">Чай</button>
+                <button class="nav-btn" onclick="switchTab(event, 'sec-hot-drinks')">Горячие</button>
+                <button class="nav-btn" onclick="switchTab(event, 'sec-breakfast')">Завтраки & Кухня</button>
+            </nav>
+        </div>
+
+        <main class="menu-wrapper">
+            
+            <div id="sec-coffee" class="menu-section active-section">
+                <div class="item-card" onclick="openConfig('Эспрессо', [3.50, 4.50], ['30 мл', '60 мл'], 'coffee')">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Эспрессо</span><span class="item-price">от 3.50 BYN</span></div>
+                        <div class="item-meta">Классический бодрящий заряд кофе.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Американо', [4.50, 5.50], ['150 мл', '250 мл'],'coffee')">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Американо</span><span class="item-price">от 4.50 BYN</span></div>
+                        <div class="item-meta">Эспрессо с добавлением чистой горячей воды.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Капучино', [5.00, 6.00], ['250 мл', '350 мл'],'coffee')">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Капучино</span><span class="item-price">от 5.00 BYN</span></div>
+                        <div class="item-meta">Классический баланс кофе и воздушной молочной пены.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Латте', [5.00, 6.00], ['250 мл', '350 мл'], 'coffee')">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Латте</span><span class="item-price">от 5.00 BYN</span></div>
+                        <div class="item-meta">Нежный, максимально молочный кофейный напиток.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Раф', [6.00, 7.00], ['250 мл', '350 мл'], 'coffee')">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Раф</span><span class="item-price">от 6.00 BYN</span></div>
+                        <div class="item-meta">Кофе, нежно взбитый вместе со сливками и ванильным сахаром.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Мокачино', [6.50, 7.50], ['250 мл', '350 мл'], 'coffee')">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Мокачино</span><span class="item-price">от 6.50 BYN</span></div>
+                        <div class="item-meta">Гармония эспрессо, горячего молока и шоколада.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Флет Уайт', [5.00, 6.00], ['250 мл', '350 мл'], 'coffee')">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Флет Уайт</span><span class="item-price">от 5.00 BYN</span></div>
+                        <div class="item-meta">Двойная порция эспрессо с тонким слоем молока – для ценителей вкуса.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Пряный американо', [5.00], ['250 мл'], 'coffee')">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Пряный американо</span><span class="item-price">5.00 BYN</span></div>
+                        <div class="item-meta">Классический американо с утонченным пряным послевкусием.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Гранатовый кофе', [8.00], ['350 мл'], 'coffee')">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Гранатовый кофе</span><span class="item-price">8.00 BYN</span></div>
+                        <div class="item-meta">Интересное сочетание терпкого кофе и сочного граната.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Халвичный раф', [8.00], ['350 мл'], 'coffee')">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Халвичный раф</span><span class="item-price">8.00 BYN</span></div>
+                        <div class="item-meta">Наш фирменный густой сливочный раф с добавлением натуральной халвы.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Сырный раф', [8.00], ['350 мл'], 'coffee')">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Сырный раф</span><span class="item-price">8.00 BYN</span></div>
+                        <div class="item-meta">Неординарный сырно-сливочный вкус, который удивляет.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="sec-cold" class="menu-section">
+                <div class="item-card" onclick="openConfig('Айс-Американо', [5.00], ['250 мл'], true)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Айс-Американо</span><span class="item-price">5.00 BYN</span></div>
+                        <div class="item-meta">Классический черный эспрессо со льдом.</div>
+                    </div>
+                    <img class="item-thumb" src="images/1488.jpg" alt="Айс-Американо">
+                </div>
+                <div class="item-card" onclick="openConfig('Айс-Латте', [8.00, 15.00], ['350 мл', '650 мл (XXL)'], true)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Айс-Латте</span><span class="item-price">от 8.00 BYN</span></div>
+                        <div class="item-meta">Мягкий кофейно-молочный хит в холодном исполнении.</div>
+                    </div>
+                    <img class="item-thumb" src="images/1898.jpg" alt="Айс-Латте">
+                </div>
+                <div class="item-card" onclick="openConfig('Эспрессо-Тоник', [8.00, 15.00], ['350 мл', '650 мл (XXL)'], true)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Эспрессо-Тоник</span><span class="item-price">от 8.00 BYN</span></div>
+                        <div class="item-meta">Бодрящий микс тоника, порции эспрессо и кубиков льда.</div>
+                    </div>
+                    <img class="item-thumb" src="images/228.jpg" alt="Эспрессо-Тоник">
+                </div>
+                <div class="item-card" onclick="openConfig('Бамбл', [8.00, 15.00], ['350 мл', '650 мл (XXL)'], true)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Бамбл</span><span class="item-price">от 8.00 BYN</span></div>
+                        <div class="item-desc">Многослойный коктейль. Базовый сок на выбор: апельсин, вишня, яблоко, грейпфрут.</div>
+                    </div>
+                    <img class="item-thumb" src="images/1900.jpg" alt="Бамбл">
+                </div>
+                <div class="item-card" onclick="openConfig('Гранатовый айс', [8.00, 15.00], ['350 мл', '650 мл (XXL)'], true)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Гранатовый айс</span><span class="item-price">от 8.00 BYN</span></div>
+                        <div class="item-meta">Освежающий ягодный холодный напиток.</div>
+                    </div>
+                    <img class="item-thumb" src="images/1563.jpg" alt="Гранатовый айс">
+                </div>
+                <div class="item-card" onclick="openConfig('Айс-Какао', [8.00, 15.00], ['350 мл', '650 мл (XXL)'], true)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Айс-Какао</span><span class="item-price">от 8.00 BYN</span></div>
+                        <div class="item-meta">Шоколадный классический вкус, только холодный.</div>
+                    </div>
+                    <img class="item-thumb" src="images/13.jpg" alt="Айс-Какао">
+                </div>
+                <div class="item-card" onclick="openConfig('Айс-Матча-Бамбл', [10.00], ['350 мл'], true)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Айс-Матча-Бамбл</span><span class="item-price">10.00 BYN</span></div>
+                        <div class="item-meta">Яркий микс сока и японского чая матча со льдом.</div>
+                    </div>
+                    <img class="item-thumb" src="images/1899.jpg" alt="Айс-Матча-Бамбл">
+                </div>
+                <div class="item-card" onclick="openConfig('Молочный коктейль', [8.00], ['350 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Молочный коктейль</span><span class="item-price">8.00 BYN</span></div>
+                        <div class="item-meta">Нежный, густой и сладкий десертный хит.</div>
+                    </div>
+                    <img class="item-thumb" src="images/12.jpg" alt="Молочный коктейль">
+                </div>
+                <div class="item-card" onclick="openConfig('Манговый айс-чай', [7.00], ['350 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Манговый айс-чай</span><span class="item-price">7.00 BYN</span></div>
+                        <div class="item-meta">Освежающий чайный настой с тропическим манго.</div>
+                    </div>
+                    <img class="item-thumb" src="images/123123.jpg" alt="Манговый айс-чай">
+                </div>
+                <div class="item-card" onclick="openConfig('Вишня в шоколаде', [10.00], ['350 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Вишня в шоколаде</span><span class="item-price">10.00 BYN</span></div>
+                        <div class="item-meta">Изысканный плотный коктейль с ярким вишневым вкусом.</div>
+                    </div>
+                    <img class="item-thumb" src="images/1234.jpg" alt="Вишня в шоколаде">
+                </div>
+                <div class="item-card" onclick="openConfig('Айс матча с манговым пюре', [10.00, 15.00], ['350 мл', '650 мл'], true)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Айс матча с манговым пюре</span><span class="item-price">от 10.00</span></div>
+                        <div class="item-meta">Айс матча с манговым пюре</div>
+                    </div>
+                    <img class="item-thumb" src="images/67.jpg" alt="Айс матча с манговым пюре">
+                </div>
+                <div class="item-card" onclick="openConfig('Пина колада', [9.00], ['350 мл'], true)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Пина колада</span><span class="item-price">9.00</span></div>
+                        <div class="item-meta">Пина колада</div>
+                    </div>
+                    <img class="item-thumb" src="images/52.jpg" alt="Пина колада">
+                </div>
+                <div class="item-card" onclick="openConfig('Айс-береза', [8.00, 15.00], ['350 мл', '650 мл'], true)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Айс-береза</span><span class="item-price">от 8.00</span></div>
+                        <div class="item-meta">Айс-береза</div>
+                    </div>
+                    <img class="item-thumb" src="images/5.jpg" alt="Айс-береза">
+                </div>
+                <div class="item-card" onclick="openConfig('Смузи Малиновый (на миндальном молоке)', [10.00], ['350 мл'], true)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Смузи Малиновый (миндаль)</span><span class="item-price">10.00</span></div>
+                        <div class="item-meta">Смузи Малиновый (на миндальном молоке)</div>
+                    </div>
+                    <img class="item-thumb" src="images/smoothie_raspberry.jpg" alt="Смузи Малиновый">
+                </div>
+                <div class="item-card" onclick="openConfig('Смузи Облепиховый (на мороженом)', [10.00], ['350 мл'], true)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Смузи Облепиховый (мороженое)</span><span class="item-price">10.00</span></div>
+                        <div class="item-meta">Смузи Облепиховый (на мороженом)</div>
+                    </div>
+                    <img class="item-thumb" src="images/smoothie_seabuckthorn.jpg" alt="Смузи Облепиховый">
+                </div>
+                <div class="item-card" onclick="openConfig('Смузи Клубничный (на гранатовом соке)', [10.00], ['350 мл'], true)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Смузи Клубничный (гранат)</span><span class="item-price">10.00</span></div>
+                        <div class="item-meta">Смузи Клубничный (на гранатовом соке)</div>
+                    </div>
+                    <img class="item-thumb" src="images/smoothie_strawberry.jpg" alt="Смузи Клубничный">
+                </div>
+            </div>
+
+            <div id="sec-lemonades" class="menu-section">
+                <div style="color:var(--text-muted); font-size:12px; margin-bottom:15px; text-transform:uppercase; letter-spacing:1px;">Все лимонады доступны к заказу в двух форматах: 350 мл или 650 мл.</div>
+                
+                <div class="item-card" onclick="openConfig('Лимонад Клюква', [8.00, 13.00], ['350 мл', '650 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Клюква</span><span class="item-price">от 8.00 BYN</span></div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Лимонад Клубника', [8.00, 13.00], ['350 мл', '650 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Клубника</span><span class="item-price">от 8.00 BYN</span></div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Лимонад Манго-маракуйя', [8.00, 13.00], ['350 мл', '650 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Манго-маракуйя</span><span class="item-price">от 8.00 BYN</span></div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Лимонад Киви-фейхоа', [8.00, 13.00], ['350 мл', '650 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Киви-фейхоа</span><span class="item-price">от 8.00 BYN</span></div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Лимонад Гранат-малина-гибискус', [8.00, 13.00], ['350 мл', '650 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Гранат-малина-гибискус</span><span class="item-price">от 8.00 BYN</span></div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Лимонад Розовый грейпфрут-малина', [8.00, 13.00], ['350 мл', '650 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Розовый грейпфрут-малина</span><span class="item-price">от 8.00 BYN</span></div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Лимонад Клубника-базилик', [8.00, 13.00], ['350 мл', '650 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Клубника-базилик</span><span class="item-price">от 8.00 BYN</span></div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Лимонад Черная смородина-мята', [8.00, 13.00], ['350 мл', '650 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Черная смородина-мята</span><span class="item-price">от 8.00 BYN</span></div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Лимонад Груша-фейхоа-зеленый чай', [8.00, 13.00], ['350 мл', '650 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Груша-фейхоа-зеленый чай</span><span class="item-price">от 8.00 BYN</span></div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Лимонад Зеленое яблоко', [8.00, 13.00], ['350 мл', '650 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Зеленое яблоко</span><span class="item-price">от 8.00 BYN</span></div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Лимонад Ежевика-голубика-розмарин', [8.00, 13.00], ['350 мл', '650 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Ежевика-голубика-розмарин</span><span class="item-price">от 8.00 BYN</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="sec-tea" class="menu-section">
+                <div class="item-card" onclick="openConfig('Листовой чай', [4.00, 8.00], ['350 мл', '1000 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Листовой чай</span><span class="item-price">от 4.00 BYN</span></div>
+                        <div class="item-meta">Ассортимент: Черный, Зеленый, Нахальный фрукт, Молочный улун. Подача в чашке или заварнике.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Гречишный чай', [4.50, 9.00], ['350 мл', '1000 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Гречишный чай</span><span class="item-price">от 4.50 BYN</span></div>
+                        <div class="item-meta">Полезный чай с легким и уютным ароматом овсяного печенья.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Масала чай', [4.50, 9.00], ['350 мл', '1000 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Масала</span><span class="item-price">от 4.50 BYN</span></div>
+                        <div class="item-meta">Согревающий индийский напиток на основе чая и ароматных пряных специй.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Имбирный чай', [5.00, 10.00], ['350 мл', '1000 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Имбирный</span><span class="item-price">от 5.00 BYN</span></div>
+                        <div class="item-meta">Натуральный и бодрящий настой имбиря для отличного иммунитета.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Облепихово-апельсиновый чай', [5.00, 10.00], ['350 мл', '1000 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Облепихово-апельсиновый</span><span class="item-price">от 5.00 BYN</span></div>
+                        <div class="item-meta">Яркий цитрусовый микс с ароматной и целебной облепихой.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Вишневый Пуэр', [5.00, 10.00], ['350 мл', '1000 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Вишневый Пуэр</span><span class="item-price">от 5.00 BYN</span></div>
+                        <div class="item-meta">Насыщенный благородный пуэр с сочными нотками спелой вишни.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Грушево-имбирный чай', [5.00, 10.00], ['350 мл', '1000 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Грушево-имбирный</span><span class="item-price">от 5.00 BYN</span></div>
+                        <div class="item-meta">Сладкая спелая груша с приятной пикантной остротой имбиря.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Клубнично-гранатовый чай', [5.00, 10.00], ['350 мл', '1000 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Клубнично-гранатовый</span><span class="item-price">от 5.00 BYN</span></div>
+                        <div class="item-meta">Насыщенный и глубокий ягодный вкус с приятной кислинкой граната.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="sec-hot-drinks" class="menu-section">
+                <div class="item-card" onclick="openConfig('Какао', [4.50, 5.50], ['250 мл', '350 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Какао</span><span class="item-price">от 4.50 BYN</span></div>
+                        <div class="item-meta">Нежный, согревающий вкус детства.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Mатча Латте', [6.00], ['250 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Матча Латте</span><span class="item-price">6.00 BYN</span></div>
+                        <div class="item-meta">Полезный японский зеленый чай матча с воздушным молоком.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Горячий шоколад', [5.50], ['250 мл'], false)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Горячий шоколад</span><span class="item-price">5.50 BYN</span></div>
+                        <div class="item-meta">Густой, тягучий, максимально насыщенный десертный напиток.</div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="sec-breakfast" class="menu-section">
+                <div class="item-card" onclick="openConfig('Сырники (1 шт)', [2.50], ['1 шт'], 'syrniki')">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Сырники</span><span class="item-price">2.50 BYN</span></div>
+                        <div class="item-meta">Домашние нежные сырники из отборного свежего творога. Цена указана за 1 штуку. Можно собрать порцию любого размера.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Вафли с курицей и грибами', [8.50], ['1 порция'], null)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Вафли с курицей и грибами</span><span class="item-price">8.50 BYN</span></div>
+                        <div class="item-meta">Хрустящие бельгийские творожные вафли с нежной грудкой, грибами под соусом.</div>
+                    </div>
+                     <img class="item-thumb" src="images/photo_5_2026-07-01_17-39-02.jpg" alt="Вафли с курицей и грибами">
+                </div>
+                <div class="item-card" onclick="openConfig('Вафли с ветчиной и сыром', [8.50], ['1 порция'], null)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Вафли с ветчиной и сыром</span><span class="item-price">8.50 BYN</span></div>
+                        <div class="item-meta">Сытные бельгийские вафли с начинкой из сочной ветчины и расплавленного сыра.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Вафли с лососем и творожным сыром', [9.50], ['1 порция'], null)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Вафли с лососем</span><span class="item-price">9.50 BYN</span></div>
+                        <div class="item-meta">Изысканное сочетание слабосоленого лосося, творожного нежного сыра и хрустящей вафли.</div>
+                    </div>
+                      <img class="item-thumb" src="images/photo_4_2026-07-01_17-39-02.jpg" alt="Вафли с лососем и творожным сыром">
+                </div>
+                <div class="item-card" onclick="openConfig('Круассан классический (пустой)', [3.50], ['1 шт'], null)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Круассан классический</span><span class="item-price">3.50 BYN</span></div>
+                        <div class="item-meta">Воздушная французская выпечка из слоеного сливочного масла.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Круассан с ветчиной и сыром', [7.50], ['1 шт'], null)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Круассан с ветчиной</span><span class="item-price">7.50 BYN</span></div>
+                        <div class="item-meta">Свежеиспеченный большой круассан с начинкой из ветчины и сыра.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('Круассан с лососем и творожным сыром', [8.50], ['1 шт'], null)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Круассан с лососем</span><span class="item-price">8.50 BYN</span></div>
+                        <div class="item-meta">Слоеный круассан со слабосоленой красной рыбой и густым нежным сыром.</div>
+                    </div>
+                    <img class="item-thumb" src="images/photo_2_2026-07-01_17-39-02.jpg" alt="Круассан с лососем">
+                </div>
+                <div class="item-card" onclick="openConfig('Панини с курицей', [7.00], ['1 шт'], null)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Панини с курицей</span><span class="item-price">7.00 BYN</span></div>
+                        <div class="item-meta">Итальянский закрытый бутерброд, обжаренный на гриле, с начинкой из сочной курицы.</div>
+                    </div>
+                    <img class="item-thumb" src="images/photo_1_2026-07-01_17-39-02.jpg" alt="Панини с курицей">
+                </div>
+                <div class="item-card" onclick="openConfig('Панини с ветчиной и сыром', [7.00], ['1 шт'], null)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">Панини с ветчиной</span><span class="item-price">7.00 BYN</span></div>
+                        <div class="item-meta">Плотный горячий панини на гриле с аппетитной классической начинкой.</div>
+                    </div>
+                </div>
+                <div class="item-card" onclick="openConfig('КИШ', [7.00], ['1 шт'], null)">
+                    <div class="item-content">
+                        <div class="item-row"><span class="item-title">КИШ</span><span class="item-price">7.00 BYN</span></div>
+                        <div class="item-meta">Традиционный открытый французский пирог с начинкой. Цена за кусочек.</div>
+                    </div>
+                    <img class="item-thumb" src="images/photo_3_2026-07-01_17-39-02.jpg" alt="КИШ">
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="configModal" class="modal-overlay" onclick="if(event.target===this) this.style.display='none'">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 class="modal-title" style="font-size: 18px; text-transform: uppercase; font-weight:800;" id="modalProductTitle">Настройка продукта</h3>
+                <button class="modal-close" onclick="document.getElementById('configModal').style.display='none'">×</button>
+            </div>
+            
+            <div class="option-group">
+                <span class="option-label">Выберите порцию / объем</span>
+                <div class="selector-grid" id="sizeSelectors"></div>
+            </div>
+
+            <div class="option-group" id="modsGroup">
+                <span class="option-label" id="modsGroupLabel">Добавки</span>
+                <div id="modsContainer"></div>
+            </div>
+
+            <button class="add-to-cart-btn" onclick="addItemToCart()">Добавить в корзину</button>
+        </div>
+    </div>
+
+    <div class="cart-bar" id="cartBar" onclick="openCart()">
+        <div class="cart-bar-info">
+            <span class="cart-bar-title">Ваш заказ сформирован</span>
+            <span class="cart-bar-count" id="cartBarCount">Выбрано товаров: 0</span>
+        </div>
+        <span class="cart-bar-total" id="cartBarTotal">0.00 BYN</span>
+    </div>
+
+    <div class="cart-modal" id="cartModal" onclick="if(event.target===this) this.style.display='none'">
+        <div class="cart-modal-container">
+            <div class="modal-header">
+                <h3 style="font-size: 18px; text-transform: uppercase; font-weight: 800;">Ваш заказ</h3>
+                <button class="modal-close" onclick="document.getElementById('cartModal').style.display='none'">×</button>
+            </div>
+
+            <div class="cart-items-list" id="cartListContainer"></div>
+
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:15px; padding-top:15px; border-top:1px solid var(--border-color);">
+                <span style="font-weight:700; font-size:14px; text-transform:uppercase; color:var(--text-muted)">Итого к оплате:</span>
+                <span style="font-weight:800; font-size:22px; color:var(--text-white);" id="cartFinalTotal">0.00 BYN</span>
+            </div>
+
+            <button class="add-to-cart-btn" style="background-color:#10b981; color:white; margin-top:20px; font-size:16px;" onclick="checkoutOrder()">Оформить заказ заказ</button>
+        </div>
+    </div>
+
+    <nav class="bottom-nav">
+        <div class="nav-item active-nav" id="btn-nav-home" onclick="navigateTo('screen-home')">
+            <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+            Главная
+        </div>
+        <div class="nav-item" id="btn-nav-menu" onclick="navigateTo('screen-menu')">
+            <svg viewBox="0 0 24 24"><path d="M11 9H9V2H7v7H5V2H3v7c0 2.12 1.66 3.84 3.75 3.97V22h2v-9.03C10.34 12.84 12 11.12 12 9V2h-1v7zm5-3v8h2.37M16 2v14h2v6h2V2h-4z"/></svg>
+            Меню
+        </div>
+    </nav>
+
+    <script>
+        let cart = [];
+        let currentItem = null;
+
+        // База добавок из ТЗ
+        const menuModifiers = {
+            coffee: [
+                { name: 'Сахар', price: 0.00 },
+                { name: 'Сироп', price: 0.50 },
+                { name: 'Корица', price: 0.00 },
+                { name: 'Альтернативное молоко', price: 3.00 }
+            ],
+            syrniki: [
+                { name: 'Джем', price: 0.50 },
+                { name: 'Сгущенка', price: 0.50 },
+                { name: 'Шоколадный топпинг', price: 0.50 },
+                { name: 'Сметана', price: 0.50 }
+            ]
+        };
+
+        // Навигация по экранам приложения (Главная / Меню)
+        function navigateTo(screenId) {
+            document.querySelectorAll('.app-screen').forEach(screen => {
+                screen.classList.remove('active-screen');
+            });
+            const targetScreen = document.getElementById(screenId);
+            if (targetScreen) {
+                targetScreen.classList.add('active-screen');
+            }
+
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active-nav'));
+            if (screenId === 'screen-home') document.getElementById('btn-nav-home').classList.add('active-nav');
+            if (screenId === 'screen-menu') document.getElementById('btn-nav-menu').classList.add('active-nav');
+
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // Переключение внутренних табов категорий в меню
+        function switchTab(event, sectionId) {
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active-tab'));
+            if(event) event.target.classList.add('active-tab');
+
+            document.querySelectorAll('.menu-section').forEach(sec => sec.classList.remove('active-section'));
+            const targetSec = document.getElementById(sectionId);
+            if(targetSec) targetSec.classList.add('active-section');
+
+            const navScroll = document.getElementById('navScroll');
+            if(event && navScroll) {
+                const btnLeft = event.target.offsetLeft;
+                const btnWidth = event.target.offsetWidth;
+                const scrollLeft = btnLeft - (navScroll.offsetWidth / 2) + (btnWidth / 2);
+                navScroll.scrollTo({ left: scrollLeft, behavior: 'smooth' });
+            }
+        }
+
+        // Живой поиск по названию или описанию
+        function filterMenu() {
+            const query = document.getElementById("menuSearch").value.toLowerCase().trim();
+            const sections = document.querySelectorAll(".menu-section");
+
+            sections.forEach(section => {
+                const cards = section.querySelectorAll(".item-card");
+                let visibleCardsInSection = 0;
+
+                cards.forEach(card => {
+                    const title = card.querySelector(".item-title").innerText.toLowerCase();
+                    const meta = card.querySelector(".item-meta") ? card.querySelector(".item-meta").innerText.toLowerCase() : "";
+                    const desc = card.querySelector(".item-desc") ? card.querySelector(".item-desc").innerText.toLowerCase() : "";
+
+                    if (title.includes(query) || meta.includes(query) || desc.includes(query)) {
+                        card.style.display = "flex";
+                        visibleCardsInSection++;
+                    } else {
+                        card.style.display = "none";
+                    }
+                });
+
+                if (query !== "") {
+                    if (visibleCardsInSection > 0) {
+                        section.style.display = "block";
+                    } else {
+                        section.style.display = "none";
+                    }
+                } else {
+                    section.style.display = "";
+                    const activeTabBtn = document.querySelector(".nav-btn.active-tab");
+                    if (activeTabBtn) {
+                        const onClickAttr = activeTabBtn.getAttribute("onclick");
+                        const sectionId = onClickAttr.match(/'([^']+)'/)[1];
+                        document.querySelectorAll('.menu-section').forEach(sec => sec.classList.remove('active-section'));
+                        document.getElementById(sectionId).classList.add('active-section');
+                    }
+                }
+            });
+        }
+
+        // Открытие конфигуратора карточки
+        function openConfig(name, prices, sizes, modType) {
+            currentItem = {
+                name: name,
+                basePrices: prices,
+                sizes: sizes,
+                selectedSizeIndex: 0,
+                activeMods: []
+            };
+
+            document.getElementById("modalProductTitle").innerText = name;
+            
+            const sizeGrid = document.getElementById("sizeSelectors");
+            sizeGrid.innerHTML = "";
+            sizes.forEach((size, idx) => {
+                const div = document.createElement("div");
+                div.className = `selector-item ${idx === 0 ? 'selected' : ''}`;
+                div.innerHTML = `<div>${size}</div><div style="font-size:11px; opacity:0.6; margin-top:2px;">${prices[idx].toFixed(2)} BYN</div>`;
+                div.onclick = () => {
+                    currentItem.selectedSizeIndex = idx;
+                    document.querySelectorAll("#sizeSelectors .selector-item").forEach((s, i) => {
+                        s.classList.toggle('selected', i === idx);
+                    });
+                };
+                sizeGrid.appendChild(div);
+            });
+
+            const modsGroup = document.getElementById("modsGroup");
+            const modsContainer = document.getElementById("modsContainer");
+            const modsLabel = document.getElementById("modsGroupLabel");
+            
+            modsContainer.innerHTML = "";
+
+            if (modType && menuModifiers[modType]) {
+                modsGroup.style.display = "block";
+                modsLabel.innerText = modType === 'coffee' ? "Добавки к кофе" : "Топпинги к сырникам";
+
+                menuModifiers[modType].forEach(mod => {
+                    const div = document.createElement("div");
+                    div.className = "modifier-item";
+                    const priceLabel = mod.price > 0 ? `+${mod.price.toFixed(2)} BYN` : "Бесплатно";
+                    div.innerHTML = `<span>${mod.name}</span><strong>${priceLabel}</strong>`;
+                    
+                    div.onclick = () => {
+                        div.classList.toggle("selected");
+                        if (div.classList.contains("selected")) {
+                            currentItem.activeMods.push({ name: mod.name, price: mod.price });
+                        } else {
+                            currentItem.activeMods = currentItem.activeMods.filter(m => m.name !== mod.name);
+                        }
+                    };
+                    modsContainer.appendChild(div);
+                });
+            } else {
+                modsGroup.style.display = "none";
+            }
+
+            document.getElementById("configModal").style.display = "flex";
+        }
+
+        // Логика добавления в массив корзины
+        function addItemToCart() {
+            if (!currentItem) return;
+
+            const sizeIndex = currentItem.selectedSizeIndex;
+            const sizeName = currentItem.sizes[sizeIndex];
+            const basePrice = currentItem.basePrices[sizeIndex];
+
+            const modsPrice = currentItem.activeMods.reduce((sum, mod) => sum + mod.price, 0);
+            const finalPrice = basePrice + modsPrice;
+
+            const modIds = currentItem.activeMods.map(m => m.name).sort().join(",");
+            const itemId = `${currentItem.name}_${sizeIndex}_${modIds}`;
+
+            const existing = cart.find(i => i.id === itemId);
+            if (existing) {
+                existing.qty++;
+            } else {
+                cart.push({
+                    id: itemId,
+                    name: currentItem.name,
+                    size: sizeName,
+                    price: finalPrice,
+                    mods: currentItem.activeMods.map(m => m.name),
+                    qty: 1
+                });
+            }
+
+            document.getElementById("configModal").style.display = "none";
+            updateCartBar();
+        }
+
+        // Обновление состояния плавающей плашки
+        function updateCartBar() {
+            const bar = document.getElementById("cartBar");
+            if (cart.length === 0) {
+                bar.style.display = "none";
+                return;
+            }
+            bar.style.display = "flex";
+            const totalQty = cart.reduce((sum, item) => sum + item.qty, 0);
+            const totalSum = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+
+            document.getElementById("cartBarCount").innerText = `Выбрано товаров: ${totalQty}`;
+            document.getElementById("cartBarTotal").innerText = `${totalSum.toFixed(2)} BYN`;
+        }
+
+        // Открытие корзины
+        function openCart() {
+            const container = document.getElementById("cartListContainer");
+            container.innerHTML = "";
+            let totalSum = 0;
+
+            cart.forEach(item => {
+                totalSum += (item.price * item.qty);
+                const row = document.createElement("div");
+                row.className = "cart-item-row";
+                
+                const modText = item.mods.length > 0 ? ` + ${item.mods.join(', ')}` : "";
+                
+                row.innerHTML = `
+                    <div class="cart-item-details">
+                        <span class="cart-item-name">${item.name}</span>
+                        <span class="cart-item-mods">${item.size}${modText}</span>
+                        <span style="font-size:12px; font-weight:700; margin-top:2px;">${(item.price * item.qty).toFixed(2)} BYN</span>
+                    </div>
+                    <div class="quantity-controls">
+                        <button class="qty-btn" onclick="changeQty('${item.id}', -1)">-</button>
+                        <span>${item.qty}</span>
+                        <button class="qty-btn" onclick="changeQty('${item.id}', 1)">+</button>
+                    </div>`;
+                container.appendChild(row);
+            });
+
+            document.getElementById("cartFinalTotal").innerText = `${totalSum.toFixed(2)} BYN`;
+            document.getElementById("cartModal").style.display = "flex";
+        }
+
+        // Редактирование количества
+        function changeQty(id, delta) {
+            const item = cart.find(i => i.id === id);
+            if (item) {
+                item.qty += delta;
+                if (item.qty <= 0) cart = cart.filter(i => i.id !== id);
+            }
+            updateCartBar();
+            if (cart.length === 0) {
+                document.getElementById("cartModal").style.display = "none";
+            } else {
+                openCart();
+            }
+        }
+
+        // Кнопка оформления
+        function checkoutOrder() {
+            alert("Заказ принят в обработку!");
+            cart = [];
+            updateCartBar();
+            document.getElementById("cartModal").style.display = "none";
+        }
+    </script>
+</body>
+</html>
